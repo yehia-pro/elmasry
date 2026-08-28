@@ -299,7 +299,14 @@ export default function StudentRegistrationWizard() {
         throw new Error(data.error || 'فشلت عملية الحجز والتسجيل.');
       }
 
-      setSuccessData(data.profile);
+      const confirmedData = data.student || data.profile || {
+        fullName: formData.fullName,
+        nationalId: formData.nationalId,
+        appointmentDate: formData.appointmentDate,
+        appointmentTime: formData.appointmentTime,
+      };
+
+      setSuccessData(confirmedData);
       setCurrentStep(4);
       window.scrollTo({ top: 150, behavior: 'smooth' });
     } catch (err: any) {
@@ -972,7 +979,7 @@ export default function StudentRegistrationWizard() {
       )}
 
       {/* STEP 4: Success & Pending Review Notice Screen */}
-      {currentStep === 4 && successData && (
+      {currentStep === 4 && (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 sm:p-12 border border-slate-200 dark:border-slate-800 shadow-2xl text-center space-y-8 max-w-3xl mx-auto">
           
           {/* Celebratory Icon */}
@@ -985,7 +992,7 @@ export default function StudentRegistrationWizard() {
               تم استلام طلبك ومقعدك محجوز بنجاح!
             </h2>
             <p className="text-slate-600 dark:text-slate-300 text-sm max-w-xl mx-auto">
-              أهلاً بك يا <strong>{successData.fullName}</strong>. تم تسجيل بياناتك وحجز موعدك للكشف الطبي في الموعد المحدد.
+              أهلاً بك يا <strong>{successData?.fullName || formData.fullName}</strong>. تم تسجيل بياناتك وحجز موعدك للكشف الطبي في الموعد المحدد.
             </p>
           </div>
 
@@ -1004,15 +1011,15 @@ export default function StudentRegistrationWizard() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-right text-xs bg-slate-50 dark:bg-slate-950/60 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
             <div>
               <span className="text-slate-400 block">الرقم القومي:</span>
-              <span className="font-mono font-bold text-slate-800 dark:text-white text-sm">{successData.nationalId}</span>
+              <span className="font-mono font-bold text-slate-800 dark:text-white text-sm">{successData?.nationalId || formData.nationalId}</span>
             </div>
             <div>
               <span className="text-slate-400 block">تاريخ الكشف المحجوز:</span>
-              <span className="font-bold text-slate-800 dark:text-white text-sm">{successData.appointmentDate}</span>
+              <span className="font-bold text-slate-800 dark:text-white text-sm">{successData?.appointmentDate || formData.appointmentDate}</span>
             </div>
             <div>
               <span className="text-slate-400 block">ساعة الكشف المحجوزة:</span>
-              <span className="font-bold text-slate-800 dark:text-white text-sm">{successData.appointmentTime?.substring(0, 5)}</span>
+              <span className="font-bold text-slate-800 dark:text-white text-sm">{(successData?.appointmentTime || formData.appointmentTime)?.substring(0, 5)}</span>
             </div>
           </div>
 
