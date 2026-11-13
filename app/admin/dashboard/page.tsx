@@ -24,9 +24,14 @@ import {
   Phone,
   ShieldCheck,
   Stethoscope,
-  ChevronDown
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  MessageCircle,
+  Printer
 } from 'lucide-react';
 import DocumentViewerModal from '@/components/DocumentViewerModal';
+import ClinicAttendanceSheetModal from '@/components/ClinicAttendanceSheetModal';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
@@ -46,6 +51,25 @@ export default function AdminDashboardPage() {
   const [dateFilter, setDateFilter] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
 
+  // Pagination States
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(20);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    totalPages: 1,
+    page: 1,
+    limit: 20,
+    hasNextPage: false,
+    hasPrevPage: false,
+  });
+
+  // Bulk Selection States
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
+  const [bulkUpdating, setBulkUpdating] = useState(false);
+
+  // Clinic Attendance Sheet Modal State
+  const [isAttendanceModalOpen, setIsAttendanceModalOpen] = useState(false);
+
   // Selected Student for Document Lightbox
   const [viewingDocsStudent, setViewingDocsStudent] = useState<any | null>(null);
 
@@ -56,7 +80,35 @@ export default function AdminDashboardPage() {
   const [doctorNotes, setDoctorNotes] = useState('');
   const [updating, setUpdating] = useState(false);
 
-  const fetchStudents = async () => {
+  const sendWhatsAppNotification = (student: any, customNote?: string) => {
+    const phone = student.studentPhone || student.fatherPhone;
+    if (!phone) {
+      alert('لا يوجد رقم هاتف مسجل للطالب أو ولي الأمر');
+      return;
+    }
+
+    let cleanPhone = phone.replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = '2' + cleanPhone;
+    } else if (!cleanPhone.startsWith('20')) {
+      cleanPhone = '20' + cleanPhone;
+    }
+
+    let text = '';
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+
+    if (student.status === 'APPROVED' || actionType === 'APPROVE') {
+      text = `السلام عليكم يا ${student.fullName}،\nنهنئك باعتماد مستنداتك وحجز الكشف الطبي بالمعهد الفني الصناعي ببورسعيد بنجاح! 🏛️\n\n📅 الموعد: ${student.appointment?.date || 'محدد'}\n⏰ الساعة: ${student.appointment?.timeSlot?.substring(0, 5) || ''}\n\nيرجى الدخول وطباعة تذكرة الكشف وإحضار الأوراق المطلوبة يوم الحضور:\n${origin}/student/dashboard`;
+    } else if (student.status === 'NEEDS_CORRECTION' || actionType === 'CORRECTION') {
+      text = `السلام عليكم يا ${student.fullName}،\nبخصوص طلب الكشف الطبي بالمعهد الفني الصناعي ببورسعيد، توجد ملاحظات على مستنداتك:\n⚠️ *${customNote || student.reviewNotes || 'يرجى إعادة رفع المستندات غير الواضحة'}*\n\nيرجى الدخول لتعديل المستندات المطلوبة لتأكيد حجزك:\n${origin}/student/dashboard`;
+    } else {
+      text = `السلام عليكم يا ${student.fullName}،\nبخصوص حجز الكشف الطبي بالمعهد الفني الصناعي ببورسعيد.\nيمكنك متابعة حالة طلبك وتذكرتك عبر الرابط:\n${origin}/student/dashboard`;
+    }
+
+    window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`, '_blank');
+  };
+
+  const fetchStudents = async (targetPage = page, targetLimit = limit) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -64,6 +116,8 @@ export default function AdminDashboardPage() {
       if (statusFilter) params.append('status', statusFilter);
       if (dateFilter) params.append('date', dateFilter);
       if (departmentFilter) params.append('department', departmentFilter);
+      params.append('page', targetPage.toString());
+      params.append('limit', targetLimit.toString());
 
       const res = await fetch(`/api/admin/students?${params.toString()}`);
       if (res.status === 401 || res.status === 403) {
@@ -75,6 +129,10 @@ export default function AdminDashboardPage() {
       if (data && data.students) {
         setStudents(data.students);
         setStats(data.stats);
+        if (data.pagination) {
+          setPagination(data.pagination);
+          setPage(data.pagination.page);
+        }
       }
     } catch (e) {
       console.error(e);
@@ -84,12 +142,26 @@ export default function AdminDashboardPage() {
   };
 
   useEffect(() => {
-    fetchStudents();
+    setPage(1);
+    fetchStudents(1, limit);
   }, [statusFilter, dateFilter, departmentFilter]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchStudents();
+    setPage(1);
+    fetchStudents(1, limit);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > pagination.totalPages || newPage === page) return;
+    setPage(newPage);
+    fetchStudents(newPage, limit);
+  };
+
+  const handleLimitChange = (newLimit: number) => {
+    setLimit(newLimit);
+    setPage(1);
+    fetchStudents(1, newLimit);
   };
 
   const handleUpdateStatus = async () => {
@@ -129,6 +201,50 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const handleToggleSelectAll = () => {
+    if (selectedStudentIds.length === students.length) {
+      setSelectedStudentIds([]);
+    } else {
+      setSelectedStudentIds(students.map((s) => s.id));
+    }
+  };
+
+  const handleToggleSelectOne = (id: string) => {
+    setSelectedStudentIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleBulkAction = async (targetStatus: string) => {
+    if (selectedStudentIds.length === 0) return;
+    if (!confirm(`هل أنت متأكد من تغيير حالة ${selectedStudentIds.length} طالب إلى "${statusMap[targetStatus]?.label || targetStatus}"؟`)) {
+      return;
+    }
+
+    setBulkUpdating(true);
+    try {
+      const res = await fetch('/api/admin/students/bulk-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentIds: selectedStudentIds,
+          status: targetStatus,
+        }),
+      });
+
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'فشلت العملية الجماعية');
+
+      alert(json.message || 'تم تحديث حالة الطلاب المحددين بنجاح');
+      setSelectedStudentIds([]);
+      fetchStudents();
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setBulkUpdating(false);
+    }
+  };
+
   const handleExportExcel = () => {
     const params = new URLSearchParams();
     if (dateFilter) params.append('date', dateFilter);
@@ -142,6 +258,7 @@ export default function AdminDashboardPage() {
     NEEDS_CORRECTION: { label: 'مطلوب تعديل مستند', bg: 'bg-red-100', text: 'text-red-800' },
     COMPLETED_FIT: { label: 'تم الكشف - لائق طبياً', bg: 'bg-blue-100', text: 'text-blue-800' },
     COMPLETED_UNFIT: { label: 'تم الكشف - غير لائق', bg: 'bg-slate-200', text: 'text-slate-800' },
+    ATTENDED: { label: 'حضر للعيادة', bg: 'bg-indigo-100', text: 'text-indigo-800' },
   };
 
   return (
@@ -170,6 +287,15 @@ export default function AdminDashboardPage() {
             <Clock className="w-4 h-4 text-slate-600" />
             <span>سعة الساعات والمواعيد</span>
           </Link>
+
+          <button
+            onClick={() => setIsAttendanceModalOpen(true)}
+            className="flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white px-5 py-2.5 rounded-xl font-bold text-xs shadow-sm transition-all"
+            title="طباعة كشف الحضور الرسمي لعيادة الكشف الطبي"
+          >
+            <Printer className="w-4 h-4" />
+            <span>كشف العيادة للطباعة (A4)</span>
+          </button>
 
           <button
             onClick={handleExportExcel}
@@ -273,12 +399,62 @@ export default function AdminDashboardPage() {
         </form>
       </div>
 
+      {/* Bulk Actions Floating/Docked Toolbar */}
+      {selectedStudentIds.length > 0 && (
+        <div className="bg-slate-900 text-white p-4 px-6 rounded-2xl shadow-xl flex flex-wrap items-center justify-between gap-4 animate-fade-in border border-slate-700">
+          <div className="flex items-center gap-3">
+            <span className="w-8 h-8 rounded-xl bg-blue-600 flex items-center justify-center font-bold text-xs text-white">
+              {selectedStudentIds.length}
+            </span>
+            <span className="font-bold text-sm">
+              تم تحديد {selectedStudentIds.length} طالب من هذه الصفحة
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <button
+              onClick={() => handleBulkAction('APPROVED')}
+              disabled={bulkUpdating}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <CheckCircle2 className="w-4 h-4" />
+              <span>اعتماد المحدد دفعة واحدة</span>
+            </button>
+
+            <button
+              onClick={() => handleBulkAction('COMPLETED_FIT')}
+              disabled={bulkUpdating}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+            >
+              <Stethoscope className="w-4 h-4" />
+              <span>تسجيل حضور وكشف (لائق طبياً)</span>
+            </button>
+
+            <button
+              onClick={() => setSelectedStudentIds([])}
+              className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-2 rounded-xl text-xs font-bold transition-all"
+            >
+              إلغاء التحديد
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Students Table */}
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        {/* Table Container with Maximum Height and Sticky Header */}
+        <div className="overflow-x-auto max-h-[620px] overflow-y-auto">
           <table className="w-full text-right text-xs text-slate-700">
-            <thead className="bg-slate-50 text-slate-900 font-bold border-b border-slate-200">
+            <thead className="bg-slate-50 text-slate-900 font-bold border-b border-slate-200 sticky top-0 z-10 shadow-sm">
               <tr>
+                <th className="py-4 px-3 text-center w-10">
+                  <input
+                    type="checkbox"
+                    checked={students.length > 0 && selectedStudentIds.length === students.length}
+                    onChange={handleToggleSelectAll}
+                    className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
+                  />
+                </th>
                 <th className="py-4 px-4">م</th>
                 <th className="py-4 px-4">بيانات الطالب</th>
                 <th className="py-4 px-4">الرقم القومي</th>
@@ -293,14 +469,14 @@ export default function AdminDashboardPage() {
             <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-500">
+                  <td colSpan={10} className="py-12 text-center text-slate-500">
                     <Hourglass className="w-8 h-8 animate-spin text-institute-600 mx-auto mb-2" />
                     <span>جاري تحميل بيانات الطلاب...</span>
                   </td>
                 </tr>
               ) : students.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-12 text-center text-slate-400">
+                  <td colSpan={10} className="py-12 text-center text-slate-400">
                     <Users className="w-10 h-10 mx-auto mb-2 opacity-40" />
                     <p className="font-semibold text-slate-600">لا توجد طلبات مطابقة لمعايير البحث</p>
                   </td>
@@ -313,10 +489,21 @@ export default function AdminDashboardPage() {
                     text: 'text-slate-800',
                   };
 
+                  const serialNum = (page - 1) * limit + idx + 1;
+                  const isSelected = selectedStudentIds.includes(st.id);
+
                   return (
-                    <tr key={st.id} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={st.id} className={`hover:bg-slate-50/80 transition-colors ${isSelected ? 'bg-blue-50/40' : ''}`}>
+                      <td className="py-4 px-3 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleSelectOne(st.id)}
+                          className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer"
+                        />
+                      </td>
                       <td className="py-4 px-4 font-mono font-bold text-slate-400">
-                        {idx + 1}
+                        {serialNum}
                       </td>
 
                       <td className="py-4 px-4">
@@ -421,6 +608,15 @@ export default function AdminDashboardPage() {
                           >
                             <Stethoscope className="w-4 h-4" />
                           </button>
+
+                          {/* WhatsApp Direct Notification */}
+                          <button
+                            onClick={() => sendWhatsAppNotification(st)}
+                            className="p-1.5 bg-green-50 hover:bg-green-600 text-green-700 hover:text-white rounded-lg transition-colors"
+                            title="إرسال إشعار فوري عبر الواتساب"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -429,6 +625,82 @@ export default function AdminDashboardPage() {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Responsive Pagination Bar */}
+        <div className="border-t border-slate-200 bg-slate-50/75 px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 text-xs font-semibold text-slate-600">
+          {/* Total Counter */}
+          <div className="flex items-center gap-2">
+            <span>
+              عرض {students.length > 0 ? (page - 1) * limit + 1 : 0} إلى{' '}
+              {Math.min(page * limit, pagination.total)} من إجمالي{' '}
+              <strong className="text-slate-900 font-mono font-bold">{pagination.total}</strong> طالب
+            </span>
+          </div>
+
+          {/* Page Selector & Arrows */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={!pagination.hasPrevPage || loading}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-slate-700 font-bold"
+              title="الصفحة السابقة"
+            >
+              <ChevronRight className="w-4 h-4" />
+              <span>السابق</span>
+            </button>
+
+            {/* Page number indicators */}
+            <div className="flex items-center gap-1 px-1">
+              {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                let p = i + 1;
+                if (pagination.totalPages > 5 && page > 3) {
+                  p = page - 2 + i;
+                  if (p > pagination.totalPages) p = pagination.totalPages - (4 - i);
+                }
+                if (p <= 0) return null;
+
+                const isActive = p === page;
+                return (
+                  <button
+                    key={p}
+                    onClick={() => handlePageChange(p)}
+                    className={`w-8 h-8 rounded-xl font-bold font-mono transition-all text-xs ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/20'
+                        : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+                    }`}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={!pagination.hasNextPage || loading}
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-slate-700 font-bold"
+              title="الصفحة التالية"
+            >
+              <span>التالي</span>
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Items Per Page Dropdown */}
+          <div className="flex items-center gap-2">
+            <span>عدد الصفوف:</span>
+            <select
+              value={limit}
+              onChange={(e) => handleLimitChange(Number(e.target.value))}
+              className="bg-white border border-slate-200 rounded-xl px-2.5 py-1 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={10}>10 طلاب</option>
+              <option value={20}>20 طالباً</option>
+              <option value={50}>50 طالباً</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -510,10 +782,28 @@ export default function AdminDashboardPage() {
               <button
                 type="button"
                 disabled={updating}
+                onClick={async () => {
+                  const studentToNotify = selectedStudentForAction;
+                  const currentNote = adminNotes;
+                  await handleUpdateStatus();
+                  if (studentToNotify) {
+                    sendWhatsAppNotification(studentToNotify, currentNote);
+                  }
+                }}
+                className="px-4 py-2.5 rounded-xl text-xs font-bold text-white bg-green-600 hover:bg-green-700 shadow-md transition-all disabled:opacity-50 inline-flex items-center gap-1.5"
+                title="حفظ وإشعار الطالب على الواتساب فوراً"
+              >
+                <MessageCircle className="w-3.5 h-3.5" />
+                <span>حفظ وإشعار واتساب</span>
+              </button>
+
+              <button
+                type="button"
+                disabled={updating}
                 onClick={handleUpdateStatus}
                 className="px-6 py-2.5 rounded-xl text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 shadow-md transition-all disabled:opacity-50"
               >
-                {updating ? 'جاري الحفظ...' : 'تأكيد وحفظ القرار'}
+                {updating ? 'جاري الحفظ...' : 'تأكيد وحفظ فقط'}
               </button>
             </div>
 
@@ -529,6 +819,14 @@ export default function AdminDashboardPage() {
           onClose={() => setViewingDocsStudent(null)}
         />
       )}
+
+      {/* Clinic Daily Attendance Sheet Printable Modal */}
+      <ClinicAttendanceSheetModal
+        isOpen={isAttendanceModalOpen}
+        onClose={() => setIsAttendanceModalOpen(false)}
+        students={students}
+        filterDate={dateFilter}
+      />
 
     </div>
   );

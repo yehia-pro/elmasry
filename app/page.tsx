@@ -8,10 +8,12 @@ import {
   Clock, 
   ShieldCheck, 
   FileCheck2, 
-  Sparkles, 
+  GraduationCap, 
   ArrowDown, 
   Stethoscope,
-  Compass
+  Compass,
+  MapPin,
+  ExternalLink
 } from 'lucide-react';
 import StudentRegistrationWizard from '@/components/StudentRegistrationWizard';
 import SpotlightTour, { TourStep } from '@/components/SpotlightTour';
@@ -20,26 +22,38 @@ const HOME_TOUR_STEPS: TourStep[] = [
   {
     target: 'hero-banner',
     title: 'أهلاً بك في بوابة الكشف الطبي!',
-    description: 'المنظومة الإلكترونية الرسمية لطلاب المعهد الفني الصناعي ببورسعيد لتسجيل البيانات وحجز موعد الكشف الطبي بكل سهولة.',
-    badge: 'خطوة 1 من 4',
+    description: 'مكانك الرسمي لتسجيل بياناتك وحجز ميعاد الكشف الطبي بكل سهولة، عشان تحضر للمعهد في ميعاد محدد وبدون أي زحمة.',
+    badge: 'مرحباً بك',
   },
   {
     target: 'stepper',
-    title: 'خطوات التسجيل الأربعة',
-    description: 'ينقسم التسجيل إلى 4 خطوات بسيطة: إدخال البيانات الشخصية، رفع المستندات، حجز الموعد بسعة 20 طالب بالساعة، ثم اعتماد الطلب.',
-    badge: 'خطوة 2 من 4',
+    title: 'خطوات الحجز الأربعة',
+    description: 'أربع خطوات بسيطة: كتابة بياناتك، تصوير أوراقك، اختيار الميعاد اللي يناسبك، واستلام تذكرتك مباشرة.',
+    badge: 'خطوات بسيطة',
   },
   {
     target: 'personal-details',
-    title: 'الرقم القومي المصري والبيانات',
-    description: 'عند كتابة الرقم القومي، يستخرج النظام تلقائياً تاريخ الميلاد والمحافظة والنوع للتحقق الفوري ومنع الأخطاء.',
-    badge: 'خطوة 3 من 4',
+    title: '1. بياناتك الشخصية',
+    description: 'اكتب رقم بطاقتك المكون من 14 رقماً، وهيتحدد تاريخ ميلادك ومحافظتك على طول عشان نوفر عليك وقت كتابة البيانات.',
+    badge: 'الخطوة الأولى',
+  },
+  {
+    target: 'docs-upload',
+    title: '2. تصوير الأوراق المطلوبة',
+    description: 'صور بطاقتك وشهادتك بموبايلك وارفعهم علطول، وهتترفع معاك بسرعة وسلاسة.',
+    badge: 'الخطوة الثانية',
+  },
+  {
+    target: 'slots-booking',
+    title: '3. اختيار اليوم والساعة',
+    description: 'اختر اليوم والساعة اللي تناسبك. كل ساعة بتستقبل 20 طالب فقط عشان تدخل تكشف علطول بدون انتظار أو تكدس.',
+    badge: 'الخطوة الثالثة',
   },
   {
     target: 'guidelines-box',
-    title: 'تعليمات الحضور للعيادة الطبية',
-    description: 'تعرف على الأوراق والشهادات المطلوبة إحضارها معك يوم الكشف الطبي بمقر المعهد ببورسعيد.',
-    badge: 'خطوة 4 من 4',
+    title: '4. الأوراق المطلوبة يوم الكشف',
+    description: 'قائمة بالشهادات والأوراق اللي تاخدها معاك في ملفك وانت رايح عيادة المعهد يوم الكشف.',
+    badge: 'الخطوة الرابعة',
   },
 ];
 
@@ -67,7 +81,7 @@ export default function HomePage() {
           
           {/* Institute Tag Badge */}
           <div className="inline-flex items-center gap-2 bg-white dark:bg-blue-950/60 backdrop-blur-md px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800 text-xs sm:text-sm font-semibold text-blue-700 dark:text-blue-300 shadow-sm">
-            <Sparkles className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <GraduationCap className="w-4 h-4 text-blue-500 dark:text-blue-400" />
             <span>بوابة التنسيق وحجز الكشف الطبي للعام الجامعي 2026 / 2027</span>
           </div>
 
@@ -83,11 +97,11 @@ export default function HomePage() {
             </div>
 
             <p className="text-slate-700 dark:text-slate-200 text-lg sm:text-2xl font-heading font-bold mt-2">
-              المنظومة الإلكترونية لتسجيل الطلاب المستجدين وحجز اللجان الطبية
+              حجز موعد الكشف الطبي للطلاب الجدد
             </p>
 
             <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-base max-w-2xl mx-auto leading-relaxed">
-              خدمة رقمية موحدة للكلية التكنولوجية ببورسعيد تتيح تسجيل البيانات بدقة، رفع المستندات، وحجز موعد الكشف الطبي بحد أقصى (20 طالباً في الساعة) لتوفير أقصى درجات الراحة والانضباط.
+              سجل بياناتك وارفع أوراقك بسهولة، واحجز ميعاد الكشف الطبي اللي يناسبك عشان تحضر للمعهد في ميعادك بدون أي زحمة أو انتظار.
             </p>
           </div>
 
@@ -97,16 +111,24 @@ export default function HomePage() {
               href="#registration-form"
               className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-2xl font-heading font-bold text-sm sm:text-base shadow-xl shadow-blue-600/25 transition-all hover:scale-105 active:scale-95"
             >
-              <span>بدء استمارة التسجيل والحجز الآن</span>
+              <span>بدء حجز موعد الكشف الآن</span>
               <ArrowDown className="w-5 h-5 animate-bounce" />
             </a>
+
+            <Link
+              href="/student/login"
+              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-4 rounded-2xl font-heading font-bold text-sm shadow-lg shadow-emerald-600/25 transition-all hover:scale-105 active:scale-95"
+            >
+              <FileCheck2 className="w-5 h-5" />
+              <span>استرجاع وطباعة التذكرة 📄</span>
+            </Link>
 
             <button
               onClick={triggerTour}
               className="inline-flex items-center gap-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-6 py-4 rounded-2xl font-heading font-bold text-sm border border-slate-300 dark:border-slate-700 shadow-md transition-all hover:scale-105 active:scale-95"
             >
               <Compass className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-              <span>تشغيل الجولة الإرشادية 🧭</span>
+              <span>دليل الحجز السريع 🧭</span>
             </button>
           </div>
 
@@ -215,6 +237,44 @@ export default function HomePage() {
               </ul>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* Institute Location & Directions Card */}
+      <section className="max-w-6xl mx-auto px-4 pt-10">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 bg-blue-900/50 text-blue-300 px-3.5 py-1 rounded-full text-xs font-bold border border-blue-700/50">
+                <MapPin className="w-4 h-4 text-red-400" />
+                <span>عنوان مقر المعهد وإرشادات الوصول</span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-white">
+                المعهد الفني الصناعي ببورسعيد
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                📍 <strong>العنوان:</strong> بورسعيد - حي المناخ - مساكن الكويت - بجوار المجمع التعليمي.
+              </p>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                🚌 <strong>للطلاب المغتربين:</strong> من موقف بورسعيد العمومي الجديد أو محطة قطار بورسعيد، استقل سيارة سرفيس (المناخ - مساكن الكويت) أو تاكسي مباشرة للمعهد الفني الصناعي.
+              </p>
+            </div>
+
+            <div className="shrink-0 flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+              <a
+                href="https://maps.google.com/?q=المعهد+الفني+الصناعي+ببورسعيد"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3.5 rounded-2xl font-bold text-xs sm:text-sm shadow-lg shadow-blue-600/30 transition-all flex items-center justify-center gap-2 hover:scale-105 active:scale-95"
+              >
+                <MapPin className="w-4 h-4 text-white" />
+                <span>فتح الموقع على خرائط Google</span>
+                <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+              </a>
+            </div>
           </div>
         </div>
       </section>

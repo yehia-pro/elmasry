@@ -1,0 +1,32 @@
+{
+  "name": "ai-council",
+  "version": "1.0.0",
+  "description": "High-powered, multi-agent AI Council for deep technical and business dissection, stress-testing, and executive governance.",
+  "main": "00-orchestrator/debate-engine.js",
+  "scripts": {
+    "start": "node 00-orchestrator/debate-engine.js",
+    "council": "node 00-orchestrator/debate-engine.js --rounds=2",
+    "council:3rounds": "node 00-orchestrator/debate-engine.js --rounds=3",
+    "council:local": "node 00-orchestrator/debate-engine.js --local --rounds=2",
+    "agent:visionary": "node 01-the-visionary/agent-runner.js",
+    "agent:critic": "node 02-the-ruthless-critic/agent-runner.js",
+    "agent:architect": "node 03-the-tech-architect/agent-runner.js",
+    "agent:hacker": "node 04-the-security-hacker/agent-runner.js",
+    "agent:ux": "node 05-the-ux-perfectionist/agent-runner.js",
+    "agent:executor": "node 06-the-chief-executor/agent-runner.js"
+  },
+  "keywords": [
+    "multi-agent",
+    "ai-council",
+    "startup-advisory",
+    "systems-architecture",
+    "cybersecurity",
+    "red-team",
+    "ux-research",
+    "executive-governance",
+    "egyptian-tech-ecosystem"
+  ],
+  "author": "Antigravity AI Council Architecture Team",
+  "license": "MIT"
+}
+

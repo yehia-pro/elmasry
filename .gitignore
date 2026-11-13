@@ -39,3 +39,6 @@ prisma/*.db
 prisma/*.db-journal
 public/uploads/*
 !public/uploads/.gitkeep
+
+# graphify cache
+graphify-out/cache/

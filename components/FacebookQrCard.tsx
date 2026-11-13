@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import QRCode from 'qrcode';
-import { ExternalLink, Sparkles, QrCode as QrIcon } from 'lucide-react';
+import { ExternalLink, QrCode as QrIcon } from 'lucide-react';
 
 const FACEBOOK_PAGE_URL = 'https://www.facebook.com/share/19YzKftH31/';
 

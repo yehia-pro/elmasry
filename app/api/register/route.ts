@@ -176,6 +176,13 @@ export async function POST(request: Request) {
         },
       });
 
+      // Atomic Post-Increment Guard (Prevents concurrency race condition)
+      if (updatedSlot.bookedCount > updatedSlot.maxCapacity) {
+        throw new Error(
+          `عذراً، هذه الساعة (${body.appointmentTime.substring(0, 5)}) اكتملت بالكامل بالحد الأقصى المسموح (${slot.maxCapacity} طالباً). يرجى اختيار ساعة أخرى.`
+        );
+      }
+
       return { user, profile, updatedSlot };
     });
 

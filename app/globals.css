@@ -81,4 +81,9 @@
   .print-only {
     display: block !important;
   }
+  .printable-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
 }

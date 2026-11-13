@@ -6,11 +6,10 @@ import {
   ChevronRight, 
   ChevronLeft, 
   Compass, 
-  Sparkles, 
+  Info, 
   ArrowLeft, 
   ArrowRight,
-  Check,
-  Wand2
+  Check
 } from 'lucide-react';
 
 export interface TourStep {
@@ -146,9 +145,9 @@ export default function SpotlightTour({
         <button
           onClick={handleStartTour}
           className="w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 via-blue-500 to-indigo-600 text-white shadow-2xl shadow-blue-500/40 flex items-center justify-center hover:scale-110 active:scale-90 transition-all border-2 border-white/20 group"
-          title="بدء الجولة الاسترشادية التفاعلية"
+          title="دليل الحجز والمساعدة"
         >
-          <Wand2 className="w-6 h-6 text-white group-hover:rotate-45 transition-transform duration-300 drop-shadow" />
+          <Compass className="w-6 h-6 text-white group-hover:rotate-45 transition-transform duration-300 drop-shadow" />
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-slate-900 animate-ping pointer-events-none" />
           <span className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full border-2 border-slate-900 pointer-events-none" />
         </button>
@@ -264,7 +263,7 @@ export default function SpotlightTour({
             </div>
 
             <div className="w-9 h-9 rounded-xl bg-blue-600/30 text-blue-400 flex items-center justify-center font-bold shrink-0">
-              <Sparkles className="w-4 h-4" />
+              <Info className="w-4 h-4" />
             </div>
           </div>
 

@@ -11,10 +11,32 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'لم يتم إرفاق أي ملف' }, { status: 400 });
     }
 
-    // Check size limit (10MB)
+    // Security Check 1: Enforce allowed MIME types (Reject executables, scripts, HTML)
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg', 'application/pdf'];
+    if (!allowedMimeTypes.includes(file.type.toLowerCase())) {
+      return NextResponse.json(
+        { error: 'نوع الملف غير مدعوم. يُسمح فقط بالصور (JPG, PNG, WebP) وملفات PDF' },
+        { status: 400 }
+      );
+    }
+
+    // Security Check 2: Enforce safe file extension
+    const extension = file.name.split('.').pop()?.toLowerCase();
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+    if (!extension || !allowedExtensions.includes(extension)) {
+      return NextResponse.json(
+        { error: 'امتداد الملف غير مسموح به لأسباب أمنية' },
+        { status: 400 }
+      );
+    }
+
+    // Security Check 3: Check size limit (10MB max, although compressed images are ~250KB)
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({ error: 'حجم الملف يجب ألا يتجاوز 10 ميجابايت' }, { status: 400 });
     }
+
+    // Sanitize file name
+    const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);

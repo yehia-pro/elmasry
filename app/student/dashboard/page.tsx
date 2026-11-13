@@ -16,7 +16,6 @@ import {
   ShieldCheck,
   Building2,
   Printer,
-  Sparkles,
   Phone
 } from 'lucide-react';
 import MedicalTicket from '@/components/MedicalTicket';
@@ -234,7 +233,7 @@ export default function StudentDashboardPage() {
           <div className="bg-emerald-600 text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-white shrink-0">
-                <Sparkles className="w-8 h-8 text-amber-300" />
+                <CheckCircle2 className="w-8 h-8 text-white" />
               </div>
               <div>
                 <h3 className="text-xl font-heading font-extrabold">

@@ -13,6 +13,11 @@ export async function GET(request: Request) {
     const status = searchParams.get('status') || '';
     const date = searchParams.get('date') || '';
     const department = searchParams.get('department') || '';
+    
+    // Pagination parameters
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
+    const limit = Math.min(100, Math.max(5, parseInt(searchParams.get('limit') || '20', 10)));
+    const skip = (page - 1) * limit;
 
     const where: any = {};
 
@@ -40,8 +45,13 @@ export async function GET(request: Request) {
       };
     }
 
+    // Get total count matching current filters
+    const totalFiltered = await prisma.studentProfile.count({ where });
+
     const students = await prisma.studentProfile.findMany({
       where,
+      skip,
+      take: limit,
       include: {
         user: {
           select: {
@@ -68,8 +78,18 @@ export async function GET(request: Request) {
     const fitCount = await prisma.studentProfile.count({ where: { status: 'COMPLETED_FIT' } });
     const correctionCount = await prisma.studentProfile.count({ where: { status: 'NEEDS_CORRECTION' } });
 
+    const totalPages = Math.ceil(totalFiltered / limit) || 1;
+
     return NextResponse.json({
       students,
+      pagination: {
+        total: totalFiltered,
+        totalPages,
+        page,
+        limit,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      },
       stats: {
         total: totalCount,
         pending: pendingCount,
