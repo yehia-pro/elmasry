@@ -121,7 +121,7 @@ export default function AdminDashboardPage() {
 
       const res = await fetch(`/api/admin/students?${params.toString()}`);
       if (res.status === 401 || res.status === 403) {
-        router.push('/admin/login');
+        router.push('/student/login');
         return;
       }
 

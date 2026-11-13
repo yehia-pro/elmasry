@@ -1,17 +1,17 @@
 # Graph Report - Elmasry  (2026-11-13)
 
 ## Corpus Check
-- 126 files · ~218,745 words
+- 126 files · ~218,273 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 5 file(s) not represented in the graph (top: .example 2, (none) 1, .css 1)
 
 ## Summary
-- 860 nodes · 1018 edges · 100 communities (55 shown, 45 thin omitted)
+- 860 nodes · 1017 edges · 100 communities (55 shown, 45 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `8cf4a8af`
+- Built from commit: `416dbd2f`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -120,7 +120,7 @@
 1. `next` - 27 edges
 2. `4. Live Council Deliberation Ledger` - 25 edges
 3. `react` - 18 edges
-4. `lucide-react` - 17 edges
+4. `lucide-react` - 16 edges
 5. `compilerOptions` - 16 edges
 6. `Tailwind CSS Performance Optimization` - 15 edges
 7. `requireAdmin()` - 14 edges
@@ -374,7 +374,7 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `next` connect `react` to `dependencies`, `next`, `debate-engine.js`, `package.json`?**
   _High betweenness centrality (0.052) - this node is a cross-community bridge._
 - **Should `react` be split into smaller, more focused modules?**
-  _Cohesion score 0.056692242114237 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.056265984654731455 - nodes in this community are weakly interconnected._
 - **Why does `cloudinary` connect `debate-engine.js` to `package.json`?**
   _High betweenness centrality (0.022) - this node is a cross-community bridge._
 - **Should `Tailwind CSS Performance Optimization` be split into smaller, more focused modules?**

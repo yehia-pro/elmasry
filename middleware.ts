@@ -8,14 +8,14 @@ export function middleware(request: NextRequest) {
 
   // 1. Guard Admin Routes
   if (pathname.startsWith('/admin')) {
-    // Public admin endpoints
-    if (pathname === '/admin/login' || pathname === '/admin/setup') {
+    // Exclude setup if needed
+    if (pathname === '/admin/setup') {
       return NextResponse.next();
     }
 
     const token = request.cookies.get(COOKIE_NAME)?.value;
     if (!token) {
-      const loginUrl = new URL('/admin/login', request.url);
+      const loginUrl = new URL('/student/login', request.url);
       loginUrl.searchParams.set('from', pathname);
       return NextResponse.redirect(loginUrl);
     }
@@ -29,13 +29,13 @@ export function middleware(request: NextRequest) {
         const payload = JSON.parse(decoded);
 
         if (payload.role !== 'ADMIN' && payload.role !== 'SUPERADMIN') {
-          return NextResponse.redirect(new URL('/admin/login', request.url));
+          return NextResponse.redirect(new URL('/student/login', request.url));
         }
       } else {
-        return NextResponse.redirect(new URL('/admin/login', request.url));
+        return NextResponse.redirect(new URL('/student/login', request.url));
       }
     } catch {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      return NextResponse.redirect(new URL('/student/login', request.url));
     }
   }
 

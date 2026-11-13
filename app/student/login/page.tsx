@@ -120,10 +120,10 @@ export default function StudentLoginPage() {
             <FileCheck2 className="w-7 h-7" />
           </div>
           <h2 className="text-2xl font-heading font-extrabold text-slate-900 dark:text-white">
-            بوابة متابعة الطالب
+            تسجيل الدخول الموحد
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            المعهد الفني الصناعي ببورسعيد - حجز ومتابعة الكشف الطبي
+            المعهد الفني الصناعي ببورسعيد - بوابة الخدمات الإلكترونية
           </p>
         </div>
 
