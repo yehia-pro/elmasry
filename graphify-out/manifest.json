@@ -66,14 +66,14 @@
     "semantic_hash": ""
   },
   "app/admin/dashboard/page.tsx": {
-    "mtime": 1794578106.363065,
-    "seen": 1794578195.10407,
+    "mtime": 1794586007.7860208,
+    "seen": 1794608940.241045,
     "ast_hash": "0238723df677bfe12bb43ee7a320cfb3",
     "semantic_hash": ""
   },
   "app/admin/login/page.tsx": {
-    "mtime": 1794578113.303442,
-    "seen": 1794578195.1040742,
+    "mtime": 1794586008.027602,
+    "seen": 1794608940.241049,
     "ast_hash": "2b0397ba866e22a64f44c1190d43abb4",
     "semantic_hash": ""
   },
@@ -162,9 +162,9 @@
     "semantic_hash": ""
   },
   "app/page.tsx": {
-    "mtime": 1794577716.711094,
-    "seen": 1794578195.1041355,
-    "ast_hash": "acd6789eb76a0ef7a57e2e3368c69117",
+    "mtime": 1794608859.856674,
+    "seen": 1794608940.2411635,
+    "ast_hash": "8e3a1b1d2eb8f0bba164033999bfc655",
     "semantic_hash": ""
   },
   "app/student/dashboard/page.tsx": {
@@ -174,8 +174,8 @@
     "semantic_hash": ""
   },
   "app/student/login/page.tsx": {
-    "mtime": 1794578162.1344485,
-    "seen": 1794578195.1041422,
+    "mtime": 1794586008.2494652,
+    "seen": 1794608940.2411702,
     "ast_hash": "c4f73daf4e6ab5f17d6f9ef47f1abc4b",
     "semantic_hash": ""
   },
@@ -204,9 +204,9 @@
     "semantic_hash": ""
   },
   "components/Navbar.tsx": {
-    "mtime": 1787934258.7270508,
-    "seen": 1794568336.4818656,
-    "ast_hash": "4c4600c87d030ed08ad97c533f08ec03",
+    "mtime": 1794608807.7655456,
+    "seen": 1794608940.2412395,
+    "ast_hash": "bfb4ea94617e9db0db5f56d0c8a429c6",
     "semantic_hash": ""
   },
   "components/SpotlightTour.tsx": {
@@ -216,9 +216,9 @@
     "semantic_hash": ""
   },
   "components/StudentRegistrationWizard.tsx": {
-    "mtime": 1794576843.3500524,
-    "seen": 1794577196.3860781,
-    "ast_hash": "193ec4a8186f7edf7b6cfff5964e2100",
+    "mtime": 1794608892.3071554,
+    "seen": 1794608940.2412467,
+    "ast_hash": "2209dc4fe2173c7f008ad245e3dd2c74",
     "semantic_hash": ""
   },
   "components/ThemeProvider.tsx": {
@@ -510,8 +510,8 @@
     "semantic_hash": ""
   },
   "middleware.ts": {
-    "mtime": 1794578093.098186,
-    "seen": 1794578195.1041977,
+    "mtime": 1794586008.4333518,
+    "seen": 1794608940.2412753,
     "ast_hash": "d5434722a9a4e3d475e8887a5b22f075",
     "semantic_hash": ""
   },

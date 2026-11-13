@@ -440,6 +440,23 @@ export default function StudentRegistrationWizard() {
             </p>
           </div>
 
+          {/* Freshmen Account Creation & Login Clarification Banner */}
+          <div className="bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs leading-relaxed text-amber-950 dark:text-amber-200 shadow-sm">
+            <div className="flex items-start gap-2.5">
+              <span className="text-base shrink-0">🎓</span>
+              <div>
+                <strong className="block font-bold mb-0.5">طالب مستجد؟</strong>
+                لست بحاجة لإنشاء حساب مسبق؛ تعبئة هذه الاستمارة تقوم بإنشاء حسابك الجديد وحجز موعد الكشف الطبي فوراً.
+              </div>
+            </div>
+            <Link
+              href="/student/login"
+              className="text-[11px] bg-white dark:bg-amber-900/60 hover:bg-amber-100 dark:hover:bg-amber-800 text-amber-900 dark:text-amber-200 px-3 py-1.5 rounded-xl border border-amber-300 dark:border-amber-700 font-bold shrink-0 shadow-sm transition-all"
+            >
+              سجلت قبل كده؟ ادخل من هنا
+            </Link>
+          </div>
+
           {/* Section 1 Smart Tip */}
           <div className="bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 rounded-2xl p-4 flex items-start gap-3 text-xs leading-relaxed text-blue-900 dark:text-blue-200 shadow-sm">
             <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" />
